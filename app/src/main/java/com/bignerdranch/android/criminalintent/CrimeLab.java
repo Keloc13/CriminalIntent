@@ -13,6 +13,7 @@ import java.util.UUID;
 public class CrimeLab
 {
     private static CrimeLab sCrimeLab;
+    public static int index = 0;
     private List<Crime> mCrimes;
 
     public static CrimeLab get(Context context)
@@ -44,10 +45,14 @@ public class CrimeLab
 
     public Crime getCrime(UUID id)
     {
-        for(Crime crime: mCrimes)
+        int size = mCrimes.size();
+
+        for(int i = 0; i < size; i++)
         {
-            if(crime.getId().equals(id))
-                return crime;
+            if(mCrimes.get(i).getId().equals(id)) {
+                index = i;
+                return mCrimes.get(i);
+            }
         }
         return null;
     }

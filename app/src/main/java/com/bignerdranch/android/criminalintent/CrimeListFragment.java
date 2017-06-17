@@ -1,10 +1,15 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -29,9 +34,16 @@ public class CrimeListFragment extends Fragment
 
         mCrimeRecyclerView = (RecyclerView) view.findViewById(R.id.crime_recycler_view);
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        // this sets the layout for the view object
         updateUI();
         return view;
+    }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        updateUI();
     }
 
     private void updateUI()
@@ -39,14 +51,16 @@ public class CrimeListFragment extends Fragment
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
 
-        mAdapter = new CrimeAdapter(crimes);
-        mCrimeRecyclerView.setAdapter(mAdapter);
-
+        if(mAdapter == null) {
+            mAdapter = new CrimeAdapter(crimes);
+            mCrimeRecyclerView.setAdapter(mAdapter);
+        }
+        else
+            mAdapter.notifyItemChanged(CrimeLab.index);
     }
 
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
-
         private Crime mCrime;
         private TextView mTitleTextView;
         private TextView mDateTextView;
@@ -73,8 +87,8 @@ public class CrimeListFragment extends Fragment
         @Override
         public void onClick(View view)
         {
-            Toast.makeText(getActivity(), mCrime.getTitle() + " clicked!",Toast.LENGTH_SHORT).show();
-
+            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            startActivity(intent);
         }
     }
 
